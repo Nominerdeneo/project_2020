@@ -1,17 +1,33 @@
-name: CI
-
-on: [push]
-
-jobs:
-  build:
-
-    runs-on: ubuntu-latest
-
-    steps:
-    - uses: actions/checkout@v1
-    - name: Run a one-line script
-      run: echo Hello, world!
-    - name: Run a multi-line script
-      run: |
-        echo Add other actions to build,
-        echo test, and deploy your project.
+library(readxl)
+data_da <- read_excel("~/data_da.xlsx")
+View(data_da)
+library("urca")
+attach(data_da)
+library("tseries")
+library(urca)
+#install.packages("vars")
+library(vars)
+y=data_da
+attach(y)
+z=cbind(LN_TB, LN_REER, LN_GDP)
+VARselect(z, lag.max = 5, type = "const")
+VARselect(z, lag.max = 5, type = "const")$selection
+cointest<-ca.jo(z, K=5, type = "eigen", ecdet = "const",
+                spec = "transitory")
+cointest
+cointest@teststat[3]
+cointest@teststat[2]
+cointest@teststat[1]
+cointest@cval
+vecm <- cajorls(cointest)
+vecm$rlm$coefficients[1,1]
+vecm$rlm$coefficients[1,2]
+vecm$rlm$coefficients[1,3]
+vecm$beta[1,1]
+vecm$beta[2,1]
+vecm$beta[3,1]
+library(lmtest)
+lntb=diff(data_da$LN_TB)
+lnreer=diff(data_da$LN_REER)
+grangertest(lntb~lnreer, order=2)
+grangertest(lnreer~lntb, order=2)
